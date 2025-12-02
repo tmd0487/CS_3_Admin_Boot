@@ -5,8 +5,64 @@
 
 <mapper namespace="report">
 
-    <select id="boardList" resultType="admin.report.ReportDTO">
-        SELECT * FROM report
+    <select id="boardList" resultType="admin.report.BoardDTO">
+        SELECT 
+            b.board_seq,
+            b.board_type,
+            u.nickname AS user_id,
+            b.title,
+            b.content,
+            b.is_reported,
+            b.is_privated,
+            b.created_at,
+            COUNT(r.report_seq) AS view_count
+        FROM board b
+        INNER JOIN report r
+            ON b.board_seq = r.board_seq
+        INNER JOIN user u
+            ON b.user_id = u.user_id
+        GROUP BY 
+            b.board_seq,
+            b.board_type,
+            u.nickname,
+            b.title,
+            b.content,
+            b.is_reported,
+            b.is_privated,
+            b.created_at
+        ORDER BY view_count DESC
+    </select>
+
+    <select id="boardDetail" resultType="admin.report.ReportDTO">
+      select * from report where board_seq = #{board_seq}
+    </select>
+
+     <select id="commentList" resultType="admin.report.CommentDTO">
+SELECT
+    c.comment_seq,
+    c.board_seq,
+    c.parent_comment_seq,
+    u.nickname AS user_id,
+    c.comment_content,
+    c.created_at,
+    COUNT(r.report_seq) AS is_deleted
+FROM comment c
+INNER JOIN report r
+    ON c.comment_seq = r.comment_seq
+INNER JOIN user u
+    ON c.user_id = u.user_id
+GROUP BY 
+    c.comment_seq,
+    c.board_seq,
+    c.parent_comment_seq,
+    u.nickname,
+    c.created_at,
+    c.comment_content
+ORDER BY is_deleted DESC
+    </select>   
+
+    <select id="commentDetail" resultType="admin.report.ReportDTO">
+      select * from report where comment_seq = #{comment_seq}
     </select>
 
 </mapper>

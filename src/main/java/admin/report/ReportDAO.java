@@ -11,7 +11,19 @@ public class ReportDAO {
     @Autowired
     private SqlSession mybatis;
 
-    public List<ReportDTO> boardList() {
+    public List<BoardDTO> boardList() {
         return mybatis.selectList("report.boardList");
+    }
+
+    public List<ReportDTO> boardDetail(int board_seq) {
+        return mybatis.selectList("report.boardDetail", board_seq);
+    }
+
+    public List<CommentDTO> commentList() {
+        return mybatis.selectList("report.commentList");
+    }
+
+    public List<ReportDTO> commentDetail(int comment_seq) {
+        return mybatis.selectList("report.commentDetail", comment_seq);
     }
 }
